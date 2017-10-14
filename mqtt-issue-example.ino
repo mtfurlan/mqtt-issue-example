@@ -14,6 +14,8 @@ long lastMsg = 0;
 char msg[50];
 int value = 0;
 
+char buf[1024];
+
 void setup() {
   Serial.begin(115200);
   setup_wifi();
@@ -61,29 +63,23 @@ void reconnect() {
       Serial.println("connected");
       // Once connected, publish an announcement...
       client.publish("outTopic", "hello world");
-      // ... and resubscribe
-	  //
-	  //
-	  // TOOD: Remove all lights, subscribe to several individual lights to prove it's the fuckload of responses
+
+
+
       Serial.println("Subscribing");
-      client.subscribe("tele/i3/commons/lights/+/LWT");
-      client.subscribe("stat/i3/commons/lights/+/POWER");
-      client.publish("cmnd/i3/commons/lights/all/POWER", "");
-      client.loop();
+      for(int i=1; i<35; i++) {
+	sprintf(buf, "stat/i3/commons/lights/scuzzLights%03d/POWER", i);
+	Serial.println(buf);
+	client.subscribe(buf);
+	sprintf(buf, "tele/i3/commons/lights/scuzzLights%03d/LWT", i);
+	client.subscribe(buf);
+	sprintf(buf, "cmnd/i3/commons/lights/scuzzLights%03d/POWER", i);
+	client.publish(buf, "");
+	client.loop();
+      }
 
-      client.subscribe("stat/i3/inside/commons/east-ceiling-fans/POWER");
-      client.subscribe("tele/i3/inside/commons/east-ceiling-fans/LWT");
-      client.publish("cmnd/i3/inside/commons/east-ceiling-fans/POWER", "");
 
-      client.loop();
-      client.subscribe("stat/i3/machineShop/fans/ceilingFan/POWER");
-      client.subscribe("tele/i3/machineShop/fans/ceilingFan/LWT");
-      client.publish("cmnd/i3/machineShop/fans/ceilingFan/POWER", "");
-      client.loop();
 
-      client.subscribe("stat/i3/laserZone/ceilingFan/POWER");
-      client.subscribe("tele/i3/laserZone/ceilingFan/LWT");
-      client.publish("cmnd/i3/laserZone/ceilingFan/POWER", "");
 
     } else {
       Serial.print("failed, rc=");
