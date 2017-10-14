@@ -67,9 +67,11 @@ void reconnect() {
 
 
       Serial.println("Subscribing");
+      Serial.println(millis());
       for(int i=1; i<35; i++) {
 	sprintf(buf, "stat/i3/commons/lights/scuzzLights%03d/POWER", i);
 	Serial.println(buf);
+	Serial.println(millis());
 	client.subscribe(buf);
 	sprintf(buf, "tele/i3/commons/lights/scuzzLights%03d/LWT", i);
 	client.subscribe(buf);
@@ -96,6 +98,4 @@ void loop() {
     reconnect();
   }
   client.loop();
-
-  Serial.println("loop");
 }
